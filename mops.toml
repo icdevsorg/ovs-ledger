@@ -10,6 +10,7 @@ stable-write-only = "https://github.com/skilesare/StableWriteOnly.mo#v0.1.0@02e9
 sha2 = "0.0.6"
 candy = "0.3.0"
 stableheapbtreemap = "1.5.0"
+principal-ext = "0.1.0"
 
 [dev-dependencies]
 test = "1.2.0"

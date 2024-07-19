@@ -14,6 +14,7 @@ import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Timer "mo:base/Timer";
 import Text "mo:base/Text";
+import AccountLib "mo:account";
 
 import Nat "mo:base/Nat";
 import CertTree "mo:cert/CertTree";
@@ -25,6 +26,7 @@ import ICRC3 "mo:icrc3-mo/";
 import ICRC3Helper "mo:icrc3-mo/helper";
 import ICRC4 "mo:icrc4-mo/ICRC4";
 import Sha256 "mo:sha2/Sha256";
+import PExt "mo:principal-ext";
 
 
 import CyclesLedger "CycleLedger";
@@ -1446,11 +1448,21 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
         case(?val) ICRC75.Set.toArray(val.members);
       };
 
+      let (bAccount, possibleAccount : ICRC1.Account) = switch(AccountLib.fromText(namespace)){
+        case(#ok(val)) (true, val);
+        case(_) (false, {owner = Principal.fromActor(this); subaccount = null});
+      };
+
       let namespaceAccount = if(namespace == ""){
         //abandoned cycles; mint to ICDV
         {owner = Principal.fromText("k3gvh-4fgvt-etjfk-dfpfc-we5bp-cguw5-6rrao-65iwb-ttim7-tt3bc-6qe"); subaccount = null};
-      }
-        else if(namespaceItems.size() != 1){
+      } else if(PExt.fromText(namespace) != null){
+        //a principal was provided
+        {owner = Principal.fromText(namespace); subaccount = null};
+      } else if(bAccount){
+        //a account was provided
+        possibleAccount;
+      } else if(namespaceItems.size() != 1){
         namespace_account(namespace);
       } else {
         switch(namespaceItems[0]){

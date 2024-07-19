@@ -72,11 +72,11 @@ Specify where you would like your cycles sent via the custom.principal item.
 
 Azel currently only supports paying to a particular principal via the `deposit_cycles` and `wallet_receive endpoint.
 
-Suggested: Implement sending to `icrc84_deposit_cycles_notify` and an optional namespace to the custom properties for use when collecting data at the recieving canister.
+Suggested: Implement sending to `icrc84_deposit_cycles_notify` and an optional namespace to override the principal property  when sending data to the receiving canister.
 
 **Overrides**
 
-Customer overrides are handled via the dfx.json config file by adding an openValueSharing node to the custom node of your canister's configuration.  Example:
+Customer overrides are handled via the dfx.json config file by adding an openValueSharing node to the custom node of your canister's configuration.  The provided example shows the user overriding the Burned Weight Halving to send cycles to the azel package(and the principal configured there), a hard coded principal, and a hard coded ICRC-1 account:
 
 ```
 "backend": {
@@ -92,7 +92,10 @@ Customer overrides are handled via the dfx.json config file by adding an openVal
       period : 2_880;
       sharingHeuristic : "BurnedWeightHalving;
       weights : {
-          "azel": 100;
+          "azel": 50;
+          "7nqmm-3byi2-wmrec-ccm5q-h6pcs-qxnxj-6jtmo-ytrbv-nlw4b-dkmbx-rqe" : 25
+          ""k2t6j-2nvnp-4zjm3-25dtz-6xhaa-c7boj-5gayf-oj3xs-i43lp-teztq-6ae-dfxgiyy.102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20" : 25
+
       };
     };
 }
@@ -136,8 +139,11 @@ type OpenValueShareRecord = record {
 
 **Custom**
 
-- **principal** - text - the principal in text representation you would like the cycles sent to. 
-- **namespace** - optional text - a namespace to include with the payment when using icrc85_deposit_cycles or icrc85_deposit_cycles_notify. If it is not included, the namespace should be set to an empty string.
+- **principal** - text - the principal in text representation you would like the cycles sent to.
+- **account** - text - optional the ICRC-1 text representation you would like the cycles assigned to by the indecated principal 
+- **namespace** - optional text - a namespace to include with the payment when using icrc85_deposit_cycles or icrc85_deposit_cycles_notify. Overrides the account if provided.
+
+If neither principal or account is provided, the service should default the identifier to the target principal.
 
 An example file:
 
@@ -177,8 +183,8 @@ The file should be a standard motoko actor and implement the OVS standard with t
 
 ```
 type OVSConsumer = ?{
-  kill_switch: opt ool;
-  handler:  opt func (vec record (text; nat, Map)) -> ();
+  kill_switch: opt bool;
+  handler:  opt func (vec record (text; Map)) -> ();
   period: opt nat;
   asset: opt text;
   platform: opt text;
@@ -209,7 +215,6 @@ module {
 If no strategy is selected and a component uses its own implementation the file should look as follows
 
 ```
-import BurnedWeightHalving "mo:BurnedWeightHalving";
 
 module {
   public let consumer = null;
@@ -251,7 +256,7 @@ import OVSConsumer "openvaluesharing.consumer.mo";
   ```motoko
      ?{
         kill_switch = null;
-        handler = ?(([(Text, Nat, Map)]) : async () => {
+        handler = ?(([(Text, Nat, Map)]) : async* () => {
           // Implement a custom distribution strategy here, such as calculating the weight based on the period being reported and the level of the codebase.
           // The Map on each item in the vector can contain additional data such as level of the code, etc
           // further logic for using burned_share and active_share
@@ -265,11 +270,21 @@ import OVSConsumer "openvaluesharing.consumer.mo";
     
   ```
 
-##### Recommended Map Values
+#### handler
 
-A developer reporting a OVS event SHOULD report the following values in the Map:
+The handler function is called by a library when it tries to run it's default open value sharing pathway. If the handler exists, the default pathway should be abandoned an the library should call the handler with the following data and allow the handler to execute the open value sharing heuristic.
+
+##### Data Values
+
+The handler has the following signature: `([(Text, Map)]) : async* ()`
+
+The Position 0 Text is the Principal, Account, or Namespace the library wants to be known as.
+The Position 1 Map allows for reporting of additional metadata as below:
+
+A developer reporting a OVS event SHOULD report the following values in the Map. These values can be ignored by the heuristic or used to allocate the cycles:
 
 - **report_period** - #Nat - nanoseconds since the last report
+- **units** - #Nat - a Nat indicating the suggested execution units that should be accounted for. The implementation does not have to honor this for any calculations, but it may be used. The library should document what it is reporting in this value
 - **tree** - #Array(#Text)the list parent libraries in order from highest to the immediate parent.
 - **asset** - #Text - the asset the component has requested
 - **platform** - #Text - the platform the component has requested
