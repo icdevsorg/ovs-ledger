@@ -300,14 +300,14 @@ This section defines the data structures and types used throughout the CycleShar
 
 #### Shares 
 
-A representation of the proportional amount of cycles a namespace should receive. Defined as a vector of records containing a namespace identifier and the amount as a natural number.
+A representation of the proportional amount of cycles a principal, account, or namespace should receive. Defined as a vector of records containing a identifier and the amount as a natural number.
 
 ```motoko
 type Shares = vec { record{ text; nat; }};
 ```
 
 #### ShareArgs
-The arguments required to share cycles among namespaces.
+The arguments required to share cycles among identifiers.
 
 ```candid
 type ShareArgs = {
@@ -342,11 +342,7 @@ If the namespace has not been claimed, they should be reserved until the namespa
 
 ```candid
 
-type Shares = vec { record{ text; nat; }};
-
-type ShareArgs = {
-  shares: Shares;
-};
+type ShareArgs = vec { record{ text; nat; }};
 
 icrc85_deposit_cycles : (ShareArgs) -> async ShareResults
 
