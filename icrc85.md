@@ -13,7 +13,7 @@ The [OVS system](https://github.com/demergent-labs/open_value_sharing) provides 
 
 Cycles are broadcast to a canister specified by an open source library. That canister may be a developer controlled canister, a cycle ledger that provides shared custody and efficiently wraps them for later retrieval, or some other community or DAO based canister that manages cycle payments benefiting developers.
 
-It may be possible in the future for ICRC-85 to be implemented into the official Cycles Ledger deployed by the NNS. A temporary cycle collector canister has been deployed on mainnet at `q26le-iqaaa-aaaam-actsa-cai`.  The source code for this canister can be found at [ovs-ledger](https://github.com/icdevsorg/ovs-ledger) and the status of the operations of this canister can be found at "".
+It may be possible in the future for ICRC-85 to be implemented into the official Cycles Ledger deployed by the NNS. A temporary cycle collector canister has been deployed on mainnet at `q26le-iqaaa-aaaam-actsa-cai`.  The source code for this canister can be found at [ovs-ledger](https://github.com/icdevsorg/ovs-ledger) and the status of the operations of this canister can be found at [status](https://github.com/icdevsorg/ovs-ledger/blob/main/status.md).
 
 ## Guiding Principals
 
