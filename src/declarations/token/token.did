@@ -1,0 +1,1043 @@
+type WithdrawResult = 
+ variant {
+   Err:
+    variant {
+      AmountBelowMinimum;
+      CallLedgerError: record {message: text;};
+      InsufficientCredit;
+    };
+   Ok: record {
+         amount: nat;
+         txid: nat;
+       };
+ };
+type WithdrawArgs = 
+ record {
+   amount: nat;
+   to: Account__3;
+   token: Token84;
+ };
+type Value__1 = 
+ variant {
+   Array: vec Value__1;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              Value__1;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type Value = 
+ variant {
+   Array: vec Value;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              Value;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type UpdateLedgerInfoRequest__2 = 
+ variant {
+   Decimals: nat8;
+   Fee: Fee;
+   FeeCollector: opt Account;
+   Logo: text;
+   MaxAccounts: nat;
+   MaxMemo: nat;
+   MaxSupply: opt nat;
+   Metadata: record {
+               text;
+               opt Value;
+             };
+   MinBurnAmount: opt nat;
+   MintingAccount: Account;
+   Name: text;
+   PermittedDrift: nat64;
+   SettleToAccounts: nat;
+   Symbol: text;
+   TransactionWindow: nat64;
+ };
+type UpdateLedgerInfoRequest__1 = 
+ variant {
+   Fee: Fee__1;
+   MaxAllowance: opt MaxAllowance;
+   MaxApprovals: nat;
+   MaxApprovalsPerAccount: nat;
+   SettleToApprovals: nat;
+ };
+type UpdateLedgerInfoRequest = 
+ variant {
+   Fee: Fee__2;
+   MaxBalances: nat;
+   MaxTransfers: nat;
+ };
+type TxIndex = nat;
+type TransferResult = 
+ variant {
+   Err: TransferError;
+   Ok: TxIndex;
+ };
+type TransferFromResponse = 
+ variant {
+   Err: TransferFromError;
+   Ok: nat;
+ };
+type TransferFromError = 
+ variant {
+   BadBurn: record {min_burn_amount: nat;};
+   BadFee: record {expected_fee: nat;};
+   CreatedInFuture: record {ledger_time: nat64;};
+   Duplicate: record {duplicate_of: nat;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InsufficientAllowance: record {allowance: nat;};
+   InsufficientFunds: record {balance: nat;};
+   TemporarilyUnavailable;
+   TooOld;
+ };
+type TransferFromArgs = 
+ record {
+   amount: nat;
+   created_at_time: opt nat64;
+   fee: opt nat;
+   from: Account__1;
+   memo: opt blob;
+   spender_subaccount: opt blob;
+   to: Account__1;
+ };
+type TransferError = 
+ variant {
+   BadBurn: record {min_burn_amount: Balance;};
+   BadFee: record {expected_fee: Balance;};
+   CreatedInFuture: record {ledger_time: Timestamp;};
+   Duplicate: record {duplicate_of: TxIndex;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InsufficientFunds: record {balance: Balance;};
+   TemporarilyUnavailable;
+   TooOld;
+ };
+type TransferBatchResults = vec opt TransferBatchResult;
+type TransferBatchResult = 
+ variant {
+   Err: TransferBatchError;
+   Ok: nat;
+ };
+type TransferBatchError = 
+ variant {
+   BadBurn: record {min_burn_amount: nat;};
+   BadFee: record {expected_fee: nat;};
+   CreatedInFuture: record {ledger_time: nat64;};
+   Duplicate: record {duplicate_of: nat;};
+   GenericBatchError: record {
+                        error_code: nat;
+                        message: text;
+                      };
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InsufficientFunds: record {balance: nat;};
+   TemporarilyUnavailable;
+   TooManyRequests: record {limit: nat;};
+   TooOld;
+ };
+type TransferBatchArgs = vec TransferArgs;
+type TransferArgs__1 = 
+ record {
+   amount: Balance;
+   created_at_time: opt Timestamp;
+   fee: opt Balance;
+   from_subaccount: opt Subaccount;
+   memo: opt Memo;
+   to: Account;
+ };
+type TransferArgs = 
+ record {
+   amount: Balance;
+   created_at_time: opt Timestamp;
+   fee: opt Balance;
+   from_subaccount: opt Subaccount;
+   memo: opt Memo;
+   to: Account;
+ };
+type Transfer = 
+ record {
+   amount: Balance;
+   created_at_time: opt Timestamp;
+   fee: opt Balance;
+   from: Account;
+   memo: opt Memo;
+   to: Account;
+ };
+type TransactionRange = 
+ record {
+   length: nat;
+   start: nat;
+ };
+type TransactionID = nat;
+type Transaction = 
+ record {
+   burn: opt Burn;
+   index: TxIndex;
+   kind: text;
+   mint: opt Mint;
+   timestamp: Timestamp;
+   transfer: opt Transfer;
+ };
+type TokenInfo = 
+ record {
+   deposit_fee: nat;
+   min_deposit: nat;
+   min_withdrawal: nat;
+   withdrawal_fee: nat;
+ };
+type Token84 = variant {icrc1: principal;};
+type Token = 
+ service {
+   admin_init: () -> ();
+   admin_update_cyclesLedger: (text) -> (bool);
+   admin_update_devAccount: (Account__3) -> (bool);
+   admin_update_icrc1: (vec UpdateLedgerInfoRequest__2) -> (vec bool);
+   admin_update_icrc2: (vec UpdateLedgerInfoRequest__1) -> (vec bool);
+   admin_update_icrc4: (vec UpdateLedgerInfoRequest) -> (vec bool);
+   admin_update_minCycles: (nat) -> (bool);
+   admin_update_owner: (principal) -> (bool);
+   deposit_cycles: () -> ();
+   get_cycles: () -> (nat);
+   get_data_certificate: () ->
+    (record {
+       certificate: opt blob;
+       hash_tree: blob;
+     }) query;
+   get_tip: () -> (Tip) query;
+   icrc10_supported_standards: () -> (vec SupportedStandard) query;
+   icrc1_balance_of: (Account__3) -> (Balance__1) query;
+   icrc1_decimals: () -> (nat8) query;
+   icrc1_fee: () -> (Balance__1) query;
+   icrc1_metadata: () -> (vec MetaDatum) query;
+   icrc1_minting_account: () -> (opt Account__3) query;
+   /// Functions for the ICRC1 token standard
+   icrc1_name: () -> (text) query;
+   icrc1_supported_standards: () -> (vec SupportedStandard) query;
+   icrc1_symbol: () -> (text) query;
+   icrc1_total_supply: () -> (Balance__1) query;
+   icrc1_transfer: (TransferArgs__1) -> (TransferResult);
+   icrc2_allowance: (AllowanceArgs) -> (Allowance) query;
+   icrc2_approve: (ApproveArgs) -> (ApproveResponse);
+   icrc2_transfer_from: (TransferFromArgs) -> (TransferFromResponse);
+   icrc3_get_archives: (GetArchivesArgs) -> (GetArchivesResult) query;
+   icrc3_get_blocks: (GetBlocksArgs) -> (GetBlocksResult) query;
+   icrc3_get_tip_certificate: () -> (opt DataCertificate) query;
+   icrc3_supported_block_types: () -> (vec BlockType__1) query;
+   icrc4_balance_of_batch: (BalanceQueryArgs) -> (BalanceQueryResult) query;
+   icrc4_maximum_query_batch_size: () -> (opt nat) query;
+   icrc4_maximum_update_batch_size: () -> (opt nat) query;
+   icrc4_transfer_batch: (TransferBatchArgs) -> (TransferBatchResults);
+   icrc75_manage_list_properties: (ManageListPropertiesRequest) ->
+    (ManageListPropertyResponse);
+   icrc84_all_credits: (opt Token84, opt nat) ->
+    (vec record {
+           Token84;
+           int;
+         }) query;
+   icrc84_credits: (Token84) -> (int) query;
+   icrc84_deposit: (DepositArgs) -> (DepositResponse);
+   icrc84_notify: (record {token: Token84;}) -> (NotifyResult);
+   icrc84_supported_tokens: (opt Token84, opt nat) -> (vec Token84) query;
+   icrc84_token_info: (Token84) -> (TokenInfo) query;
+   icrc84_trackedDeposit: (Token84) -> (BalanceResult) query;
+   icrc84_withdraw: (WithdrawArgs) -> (WithdrawResult);
+   icrc85_namespace_account: (text) -> (Account__3) query;
+   icrc85_deposit_cycles: (ShareArgs) -> (ShareResult);
+   icrc86_approve_domain: (DomainApprovalRequest) -> (DomainApprovalResponse);
+   icrc86_claim_domain: (DomainClaimRequest) -> (DomainClaimResponse);
+   icrc86_domain_look_up: (vec Domain) ->
+    (vec record {
+           opt vec principal;
+           opt DomainValidationRecord;
+         }) query;
+   icrc86_namespace_look_up: (vec vec text) ->
+    (vec opt NamespaceLookupResponse) query;
+   icrc_75_get_list_lists: (List__1, opt List__1, opt nat) ->
+    (vec List__1) query;
+   icrc_75_get_list_members_admin: (List__1, opt ListItem__1, opt nat) ->
+    (vec ListItem__1) query;
+   icrc_75_get_list_permissions_admin: (List__1, opt Permission__1,
+    opt PermissionListItem__1, opt nat) -> (PermissionList__1) query;
+   icrc_75_get_lists: (opt text, bool, opt List__1, opt nat) ->
+    (vec ListRecord) query;
+   icrc_75_is_member: (vec AuthorizedRequestItem) -> (vec bool) query;
+   icrc_75_manage: (ManageRequest) -> (ManageResponse);
+   icrc_75_manage_list_membership: (ManageListMembershipRequest) ->
+    (ManageListMembershipResponse);
+   icrc_75_member_of: (ListItem__1, opt List__1, opt nat) ->
+    (vec List__1) query;
+   icrc_75_metadata: () -> (DataItemMap) query;
+   stats: () ->
+    (record {
+       CyclesLedger_CANISTER_ID: text;
+       domainOwners: nat;
+       domainValidation: nat;
+       failedDeposit: vec record {
+                            nat;
+                            ShareArgs;
+                          };
+       icrc1: vec MetaDatum;
+       icrc2: vec MetaDatum__1;
+       icrc3: Stats;
+       icrc4: vec MetaDatum__2;
+       lastXDRRate: int;
+       namespaceAccounts: nat;
+       owner: principal;
+       pendingTransfers: vec WithdrawArgs;
+       xdr_permyriad_per_icp: nat64;
+     }) query;
+ };
+type Tip = 
+ record {
+   hash_tree: blob;
+   last_block_hash: blob;
+   last_block_index: blob;
+ };
+type Timestamp = nat64;
+type SupportedStandard = 
+ record {
+   name: text;
+   url: text;
+ };
+type Subaccount__4 = blob;
+type Subaccount__3 = blob;
+type Subaccount__2 = blob;
+type Subaccount__1 = blob;
+type Subaccount = blob;
+type Stats = 
+ record {
+   archives: vec record {
+                   principal;
+                   TransactionRange;
+                 };
+   bCleaning: bool;
+   constants:
+    record {
+      archiveProperties:
+       record {
+         archiveControllers: opt opt vec principal;
+         archiveCycles: nat;
+         maxActiveRecords: nat;
+         maxRecordsInArchiveInstance: nat;
+         maxRecordsToArchive: nat;
+         settleToRecords: nat;
+       };};
+   firstIndex: nat;
+   lastIndex: nat;
+   ledgerCanister: principal;
+   localLedgerSize: nat;
+   supportedBlocks: vec BlockType;
+ };
+type ShareResult = 
+ variant {
+   Err: ShareCycleError;
+   Ok: nat;
+ };
+type ShareCycleError = 
+ variant {
+   CustomError: text;
+   NotEnoughCycles: record {
+                      nat;
+                      nat;
+                    };
+ };
+type ShareArgs = 
+ vec record {
+       text;
+       nat;
+     };
+type PropertyShared__1 = 
+ record {
+   immutable: bool;
+   name: text;
+   value: DataItem__1;
+ };
+type PropertyShared = 
+ record {
+   immutable: bool;
+   name: text;
+   value: CandyShared;
+ };
+type Permission__2 = 
+ variant {
+   Admin;
+   Permissions;
+   Read;
+   Write;
+ };
+type Permission__1 = 
+ variant {
+   Admin;
+   Permissions;
+   Read;
+   Write;
+ };
+type PermissionList__1 = vec PermissionListItem__2;
+type PermissionListItem__2 = 
+ record {
+   Permission__2;
+   ListItem__2;
+ };
+type PermissionListItem__1 = 
+ record {
+   Permission__2;
+   ListItem__2;
+ };
+type PermissionListItem = 
+ record {
+   Permission;
+   ListItem;
+ };
+type PermissionList = vec PermissionListItem;
+type Permission = 
+ variant {
+   Admin;
+   Permissions;
+   Read;
+   Write;
+ };
+type NotifyResult = 
+ variant {
+   Err:
+    variant {
+      CallLedgerError: record {message: text;};
+      NotAvailable: record {message: text;};
+    };
+   Ok: record {
+         credit: int;
+         credit_inc: nat;
+         deposit_inc: nat;
+       };
+ };
+type NamespaceRecordShared = 
+ record {
+   members: vec ListItem;
+   metadata: ICRC16Map;
+   namespace: text;
+   permissions: PermissionList;
+ };
+type NamespaceLookupResponse = 
+ record {
+   controllers: vec principal;
+   domain: Domain;
+ };
+type Mint = 
+ record {
+   amount: Balance;
+   created_at_time: opt Timestamp;
+   memo: opt Memo;
+   to: Account;
+ };
+type MetaDatum__2 = 
+ record {
+   text;
+   Value;
+ };
+type MetaDatum__1 = 
+ record {
+   text;
+   Value;
+ };
+type MetaDatum = 
+ record {
+   text;
+   Value;
+ };
+type Memo = blob;
+type MaxAllowance = 
+ variant {
+   Fixed: nat;
+   TotalSupply;
+ };
+type ManageResultError = 
+ variant {
+   Other: text;
+   Unauthorized;
+ };
+type ManageResult = 
+ opt variant {
+       Err: ManageResultError;
+       Ok;
+     };
+type ManageResponse = vec ManageResult;
+type ManageRequestItem = 
+ variant {
+   UpdateDefaultTake: nat;
+   UpdateMaxTake: nat;
+   UpdatePermittedDrift: nat;
+   UpdateTxWindow: nat;
+ };
+type ManageRequest = vec ManageRequestItem;
+type ManageListPropertyResult = 
+ opt variant {
+       Err: ManageListPropertyError;
+       Ok: TransactionID;
+     };
+type ManageListPropertyResponse = vec ManageListPropertyResult;
+type ManageListPropertyRequestItem = 
+ record {
+   action: ManageListPropertyRequestAction;
+   created_at_time: opt nat;
+   from_subaccount: opt Subaccount__3;
+   list: List__2;
+   memo: opt blob;
+ };
+type ManageListPropertyRequestAction = 
+ variant {
+   ChangePermissions:
+    variant {
+      Admin: variant {
+               Add: ListItem__2;
+               Remove: ListItem__2;
+             };
+      Permissions: variant {
+                     Add: ListItem__2;
+                     Remove: ListItem__2;
+                   };
+      Read: variant {
+              Add: ListItem__2;
+              Remove: ListItem__2;
+            };
+      Write: variant {
+               Add: ListItem__2;
+               Remove: ListItem__2;
+             };
+    };
+   Create:
+    record {
+      admin: opt ListItem__2;
+      members: vec ListItem__2;
+      metadata: DataItemMap__1;
+    };
+   Delete;
+   Metadata: record {
+               key: text;
+               value: opt DataItem__1;
+             };
+   Rename: text;
+ };
+type ManageListPropertyError = 
+ variant {
+   Exists;
+   IllegalAdmin;
+   IllegalPermission;
+   NotFound;
+   Other: text;
+   Unauthorized;
+ };
+type ManageListPropertiesRequest = vec ManageListPropertyRequestItem;
+type ManageListMembershipResult = 
+ opt variant {
+       Err: ManageListMembershipError;
+       Ok: TransactionID;
+     };
+type ManageListMembershipResponse = vec ManageListMembershipResult;
+type ManageListMembershipRequestItem = 
+ record {
+   action: ManageListMembershipAction;
+   created_at_time: opt nat;
+   from_subaccount: opt Subaccount__3;
+   list: List__2;
+   memo: opt blob;
+ };
+type ManageListMembershipRequest = vec ManageListMembershipRequestItem;
+type ManageListMembershipError = 
+ variant {
+   NotFound;
+   Other: text;
+   Unauthorized;
+ };
+type ManageListMembershipAction = 
+ variant {
+   Add: ListItem__2;
+   Remove: ListItem__2;
+ };
+type List__2 = text;
+type List__1 = text;
+type ListRecord = 
+ record {
+   list: List__2;
+   metadata: opt DataItemMap__1;
+ };
+type ListItem__2 = 
+ variant {
+   Account: Account__4;
+   DataItem: DataItem__1;
+   Identity: Identity__1;
+   List: List__2;
+ };
+type ListItem__1 = 
+ variant {
+   Account: Account__2;
+   DataItem: DataItem;
+   Identity: Identity;
+   List: List;
+ };
+type ListItem = 
+ variant {
+   Account: Account__2;
+   DataItem: DataItem;
+   Identity: Identity;
+   List: List;
+ };
+type List = text;
+type InitArgs__5 = opt
+                    record {
+                      existingNamespaces: opt vec NamespaceRecordShared;};
+type InitArgs__4 = 
+ record {
+   fee: opt Fee__2;
+   max_balances: opt nat;
+   max_transfers: opt nat;
+ };
+type InitArgs__3 = 
+ record {
+   archiveControllers: opt opt vec principal;
+   archiveCycles: nat;
+   archiveIndexType: IndexType;
+   maxActiveRecords: nat;
+   maxArchivePages: nat;
+   maxRecordsInArchiveInstance: nat;
+   maxRecordsToArchive: nat;
+   settleToRecords: nat;
+   supportedBlocks: vec BlockType;
+ };
+type InitArgs__2 = opt InitArgs__3;
+type InitArgs__1 = 
+ record {
+   advanced_settings: opt AdvancedSettings__1;
+   fee: opt Fee__1;
+   max_allowance: opt MaxAllowance;
+   max_approvals: opt nat;
+   max_approvals_per_account: opt nat;
+   settle_to_approvals: opt nat;
+ };
+type InitArgs = 
+ record {
+   advanced_settings: opt AdvancedSettings;
+   decimals: nat8;
+   fee: opt Fee;
+   fee_collector: opt Account;
+   logo: opt text;
+   max_accounts: opt nat;
+   max_memo: opt nat;
+   max_supply: opt Balance;
+   metadata: opt Value;
+   min_burn_amount: opt Balance;
+   minting_account: opt Account;
+   name: opt text;
+   permitted_drift: opt Timestamp;
+   settle_to_accounts: opt nat;
+   symbol: opt text;
+   transaction_window: opt Timestamp;
+ };
+type IndexType = 
+ variant {
+   Managed;
+   Stable;
+   StableTyped;
+ };
+type Identity__1 = principal;
+type Identity = principal;
+type ICRC16Map = 
+ vec record {
+       text;
+       DataItem;
+     };
+type GetTransactionsResult = 
+ record {
+   archived_blocks: vec ArchivedTransactionResponse;
+   blocks: vec record {
+                 block: Value__1;
+                 id: nat;
+               };
+   log_length: nat;
+ };
+type GetTransactionsFn = func (vec TransactionRange) ->
+                          (GetTransactionsResult) query;
+type GetBlocksResult = 
+ record {
+   archived_blocks: vec ArchivedTransactionResponse;
+   blocks: vec record {
+                 block: Value__1;
+                 id: nat;
+               };
+   log_length: nat;
+ };
+type GetBlocksArgs = vec TransactionRange;
+type GetArchivesResultItem = 
+ record {
+   canister_id: principal;
+   end: nat;
+   start: nat;
+ };
+type GetArchivesResult = vec GetArchivesResultItem;
+type GetArchivesArgs = record {from: opt principal;};
+type Fee__2 = 
+ variant {
+   Environment;
+   Fixed: nat;
+   ICRC1;
+ };
+type Fee__1 = 
+ variant {
+   Environment;
+   Fixed: nat;
+   ICRC1;
+ };
+type Fee = 
+ variant {
+   Environment;
+   Fixed: nat;
+ };
+type DomainValidationRecord = 
+ record {
+   approved: bool;
+   controllers: vec principal;
+   domain: Domain;
+   validation: text;
+   validationTime: int;
+ };
+type DomainClaimResponse = 
+ variant {
+   Err:
+    variant {
+      Unauthorized;
+      ValidationGateFailed;
+      ValidationRecordNotApproved;
+      ValidationRecordNotFound;
+    };
+   Ok: record {
+         controllers: vec principal;
+         domain: Domain;
+       };
+   RecordExists: record {
+                   controllers: vec principal;
+                   domain: Domain;
+                 };
+   ValidationRequired:
+    record {
+      controllers: vec principal;
+      domain: Domain;
+      existingControllers: opt vec principal;
+      validation: text;
+    };
+ };
+type DomainClaimRequest = 
+ record {
+   controllers: opt vec principal;
+   domain: Domain;
+   gateAccount: opt Account__3;
+   validationCode: opt text;
+ };
+type DomainApprovalResponse = 
+ variant {
+   Err:
+    variant {
+      ValidationRecordNotFound;
+      ValidationSuccededButTransferError: record {message: text;};
+    };
+   Ok;
+ };
+type DomainApprovalRequest = 
+ record {
+   domain: Domain;
+   validationCode: text;
+ };
+type Domain = vec text;
+type DepositResult = 
+ record {
+   credit: int;
+   credit_inc: nat;
+   txid: nat;
+ };
+type DepositResponse = 
+ variant {
+   Err:
+    variant {
+      AmountBelowMinimum;
+      CallLedgerError: record {message: text;};
+      TransferError: record {message: text;};
+    };
+   Ok: DepositResult;
+ };
+type DepositArgs = 
+ record {
+   amount: nat;
+   subaccount: opt blob;
+   token: Token84;
+ };
+type DataItem__1 = 
+ variant {
+   Array: vec DataItem__1;
+   Blob: blob;
+   Bool: bool;
+   Bytes: vec nat8;
+   Class: vec PropertyShared__1;
+   Float: float64;
+   Floats: vec float64;
+   Int: int;
+   Int16: int16;
+   Int32: int32;
+   Int64: int64;
+   Int8: int8;
+   Ints: vec int;
+   Map: DataItemMap__1;
+   Nat: nat;
+   Nat16: nat16;
+   Nat32: nat32;
+   Nat64: nat64;
+   Nat8: nat8;
+   Nats: vec nat;
+   Option: opt DataItem__1;
+   Principal: principal;
+   Set: vec DataItem__1;
+   Text: text;
+   ValueMap: vec record {
+                   DataItem__1;
+                   DataItem__1;
+                 };
+ };
+type DataItemMap__1 = 
+ vec record {
+       text;
+       DataItem__1;
+     };
+type DataItemMap = 
+ vec record {
+       text;
+       DataItem__1;
+     };
+type DataItem = 
+ variant {
+   Array: vec CandyShared;
+   Blob: blob;
+   Bool: bool;
+   Bytes: vec nat8;
+   Class: vec PropertyShared;
+   Float: float64;
+   Floats: vec float64;
+   Int: int;
+   Int16: int16;
+   Int32: int32;
+   Int64: int64;
+   Int8: int8;
+   Ints: vec int;
+   Map: vec record {
+              text;
+              CandyShared;
+            };
+   Nat: nat;
+   Nat16: nat16;
+   Nat32: nat32;
+   Nat64: nat64;
+   Nat8: nat8;
+   Nats: vec nat;
+   Option: opt CandyShared;
+   Principal: principal;
+   Set: vec CandyShared;
+   Text: text;
+   ValueMap: vec record {
+                   CandyShared;
+                   CandyShared;
+                 };
+ };
+type DataCertificate = 
+ record {
+   certificate: blob;
+   hash_tree: blob;
+ };
+type CandyShared = 
+ variant {
+   Array: vec CandyShared;
+   Blob: blob;
+   Bool: bool;
+   Bytes: vec nat8;
+   Class: vec PropertyShared;
+   Float: float64;
+   Floats: vec float64;
+   Int: int;
+   Int16: int16;
+   Int32: int32;
+   Int64: int64;
+   Int8: int8;
+   Ints: vec int;
+   Map: vec record {
+              text;
+              CandyShared;
+            };
+   Nat: nat;
+   Nat16: nat16;
+   Nat32: nat32;
+   Nat64: nat64;
+   Nat8: nat8;
+   Nats: vec nat;
+   Option: opt CandyShared;
+   Principal: principal;
+   Set: vec CandyShared;
+   Text: text;
+   ValueMap: vec record {
+                   CandyShared;
+                   CandyShared;
+                 };
+ };
+type Burn = 
+ record {
+   amount: Balance;
+   created_at_time: opt Timestamp;
+   from: Account;
+   memo: opt Memo;
+ };
+type BlockType__1 = 
+ record {
+   block_type: text;
+   url: text;
+ };
+type BlockType = 
+ record {
+   block_type: text;
+   url: text;
+ };
+type Balance__1 = nat;
+type BalanceResult = 
+ variant {
+   Err: variant {NotAvailable: record {message: text;};};
+   Ok: nat;
+ };
+type BalanceQueryResult = vec nat;
+type BalanceQueryArgs = record {accounts: vec Account__5;};
+type Balance = nat;
+type AuthorizedRequestItem = 
+ record {
+   ListItem__2;
+   vec vec List__2;
+ };
+type ArchivedTransactionResponse = 
+ record {
+   args: vec TransactionRange;
+   callback: GetTransactionsFn;
+ };
+type ApproveResponse = 
+ variant {
+   Err: ApproveError;
+   Ok: nat;
+ };
+type ApproveError = 
+ variant {
+   AllowanceChanged: record {current_allowance: nat;};
+   BadFee: record {expected_fee: nat;};
+   CreatedInFuture: record {ledger_time: nat64;};
+   Duplicate: record {duplicate_of: nat;};
+   Expired: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InsufficientFunds: record {balance: nat;};
+   TemporarilyUnavailable;
+   TooOld;
+ };
+type ApproveArgs = 
+ record {
+   amount: nat;
+   created_at_time: opt nat64;
+   expected_allowance: opt nat;
+   expires_at: opt nat64;
+   fee: opt nat;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   spender: Account__1;
+ };
+type ApprovalInfo = 
+ record {
+   amount: nat;
+   expires_at: opt nat64;
+   from_subaccount: opt blob;
+   spender: Account__1;
+ };
+type AllowanceArgs = 
+ record {
+   account: Account__1;
+   spender: Account__1;
+ };
+type Allowance = 
+ record {
+   allowance: nat;
+   expires_at: opt nat64;
+ };
+type AdvancedSettings__1 = record {
+                             existing_approvals:
+                              vec
+                               record {
+                                 record {
+                                   Account__1;
+                                   Account__1;
+                                 };
+                                 ApprovalInfo;
+                               };};
+type AdvancedSettings = 
+ record {
+   burned_tokens: Balance;
+   existing_balances: vec record {
+                            Account;
+                            Balance;
+                          };
+   fee_collector_block: nat;
+   fee_collector_emitted: bool;
+   local_transactions: vec Transaction;
+   minted_tokens: Balance;
+ };
+type Account__5 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount__4;
+ };
+type Account__4 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount__3;
+ };
+type Account__3 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount;
+ };
+type Account__2 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount__2;
+ };
+type Account__1 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount__1;
+ };
+type Account = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount;
+ };
+service : (opt
+            record {
+              icrc1: opt InitArgs;
+              icrc2: opt InitArgs__1;
+              icrc3: InitArgs__2;
+              icrc4: opt InitArgs__4;
+              icrc75: InitArgs__5;
+            }) -> Token

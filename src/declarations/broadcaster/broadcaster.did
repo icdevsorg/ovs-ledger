@@ -1,0 +1,24 @@
+type ShareResult = 
+ variant {
+   Err: ShareCycleError;
+   Ok: nat;
+ };
+type ShareCycleError = 
+ variant {
+   CustomError: record {
+                  code: nat;
+                  message: text;
+                };
+   NotEnoughCycles: record {
+                      nat;
+                      nat;
+                    };
+ };
+type Broadcaster = 
+ service {
+   broadcast: (text, vec record {
+                           text;
+                           nat;
+                         }, nat) -> (ShareResult);
+ };
+service : () -> Broadcaster

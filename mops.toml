@@ -1,0 +1,35 @@
+[dependencies]
+base = "0.11.1"
+cert = "https://github.com/nomeata/ic-certification#v0.1.3@c403ffec0a60f658a1009976c785aa567ff0da77"
+icrc1-mo = "0.0.15"
+icrc2-mo = "0.0.13"
+icrc3-mo = "0.2.6"
+icrc4-mo = "0.0.5"
+icrc75 = "https://github.com/icdevsorg/icrc75.mo"
+stable-write-only = "https://github.com/skilesare/StableWriteOnly.mo#v0.1.0@02e9aac74bdbed86b52ebed985d82b6ef66a76d8"
+sha2 = "0.0.6"
+candy = "0.3.0"
+stableheapbtreemap = "1.5.0"
+
+[dev-dependencies]
+test = "1.2.0"
+fuzz = "0.2.0"
+matchers = "https://github.com/kritzcreek/motoko-matchers#v1.3.0@3dac8a071b69e4e651b25a7d9683fe831eb7cffd"
+
+[package]
+name = "ovs-ledger"
+version = "0.0.1"
+description = "Manages open value sharing for canisters"
+repository = "https://github.com/icdevsorg/ovs-ledger"
+keywords = [
+  "icrc2",
+  "icrc1",
+  "icrc3",
+  "icrc4",
+  "icrc10",
+  "fungible",
+  "token",
+  "standard",
+  "cycles",
+  "open value sharing"
+]
