@@ -23,7 +23,7 @@ This library is designed as a Motoko actor class that can be imported and integr
 
 ### Depositing Tokens
 
-Depositing tokens into the cycles sharing ledger is managed via the `icrc85_deposit_cycles` and `icrc85_deposit_cycles_notify`function. These function handles the allocation of shared cycles to designated namespaces, either reserving them for later claims or directly minting tokens into the account of a namespace owner. Namespace owners can claim their cycles at a later time, ensuring a flexible and robust management system for cycle distribution.
+Depositing tokens into the cycles sharing ledger is managed via the `icrc85_deposit_cycles` or `icrc85_deposit_cycles_notify`function. These function handles the allocation of shared cycles to designated namespaces, either reserving them for later claims or directly minting tokens into the account of a namespace owner. Namespace owners can claim their cycles at a later time, ensuring a flexible and robust management system for cycle distribution.
 
 #### Workflow for Depositing Tokens
 1. **Cycle Reception**: Cycles are received into the ledger canister through direct deposition. Cycles should be added to the call using the proper system api(`ExperimentalCycles.add()` in motoko)
@@ -197,6 +197,16 @@ This project relies on the following external libraries and schemas:
 - `cert`: Certificate utilities for the Internet Computer.
 - `icrc1-mo`, `icrc2-mo`, `icrc3-mo`, `icrc4-mo`: Libraries that implement the respective ICRC token standards.
 - `sha2`: For hashing and book keeping in memo fields
+
+## OVS Default Behavior
+
+This motoko class has a default OVS behavior that sends cycles to the developer to provide funding for maintenance and continued development. In accordance with the OVS specification and ICRC85, this behavior may be overridden by another OVS sharing heuristic or turned off. We encourage all users to implement some form of OVS sharing as it helps us provide quality software and support to the community.
+
+Default behavior: This library is dependent on other libraries that utilize OVS but does not employ any additional default behavior unless an OVS heuristic is provided.
+
+Default Beneficiary: ICDevs.org
+
+Additional Behavior: Utilizes the icrc75.mo library by ICDevs.org: https://github.com/icdevsorg/icrc75.mo
 
 ## Contributing
 

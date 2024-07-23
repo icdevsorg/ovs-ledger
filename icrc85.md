@@ -1,6 +1,6 @@
 |ICRC|Title|Author|Discussions|Status|Type|Category|Created|
 |:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-|85|CycleShare Standard|Austin Fatheree (@skilesare), |Draft|Standards Track||2024-04-10|
+|85|Open Value Sharing Implementation Standard|Austin Fatheree (@skilesare), |Draft|Standards Track||2024-04-10|
 
 
 # ICRC-85: Open Value Sharing Implementation Standards
@@ -45,6 +45,12 @@ Shared custody IS NOT required for ICRC-85 implementation, but those that do imp
 1. Reduced cycle transmission cost
 2. Built in statistics tracking via ICRC-3 Transaction Logs
 3. Security against namespace highjacking
+
+### Readme disclosures
+
+Libraries that implement an OVS default strategy should include a clear description of that strategy in the readme.md of the included project.
+
+## Implementations
 
 
 ### Rust
@@ -296,7 +302,7 @@ todo
 
 ### Data Definitions
 
-This section defines the data structures and types used throughout the CycleShare system.
+This section defines the data structures and types used throughout the OVS system.
 
 #### Shares 
 
@@ -428,7 +434,7 @@ When a participant withdraws cycles from the shared ledger, their request and th
 
 #### Block schema for payment of OVS payments.
 
-Deposits into the CycleShare ledger can be detected via the 1mint blocks in the ICRC3 ledger.  The memo should be the sending Principal as a blob.
+Deposits into an OVS ledger can be detected via the 1mint blocks in the ICRC3 ledger.  The memo should be the sending Principal as a blob.
 
 Transfers from namespace accounts to target accounts will be 1xfer transactions.
 
