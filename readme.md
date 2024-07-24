@@ -20,7 +20,7 @@ The OVS Ledger is currently deployed at "q26le-iqaaa-aaaam-actsa-cai".
 
 This library is designed as a Motoko actor class that can be imported and integrated into your IC project. To use this library:
 1. Ensure you have the DFINITY Canister SDK installed.
-2. Clone this repository or copy the code into your IC project.
+2. `mops add ovs-ledger`
 3. Include the Motoko code in your project and deploy it to the Internet Computer network.
 
 ### Depositing Tokens
