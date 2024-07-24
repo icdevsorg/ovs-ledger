@@ -31,8 +31,8 @@ import PExt "mo:principal-ext";
 
 import CyclesLedger "CycleLedger";
 import CMC "cmc";
-import ICRC75 "mo:icrc75";
-import Service75 "mo:icrc75/service";
+import ICRC75 "mo:icrc75-mo";
+import Service75 "mo:icrc75-mo/service";
 
 shared ({ caller = _owner }) actor class Token  (args: ?{
     icrc1 : ?ICRC1.InitArgs;
@@ -424,6 +424,7 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
     private func get_icrc75_environment() : ICRC75.Environment {
     {
       advanced = null;
+      tt = null; // for recovery and safety you likely want to provide a timer tool instance here
       addRecord = ?icrc3().add_record;
       icrc10_register_supported_standards = icrc1().register_supported_standards;
     };
