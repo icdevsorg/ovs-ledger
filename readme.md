@@ -2,6 +2,8 @@
 
 The OVS Ledger Library is designed to manage the sharing of cycles within the Internet Computer (IC) environment, implementing ICRC-85 standards for cycle sharing. This library provides an interface for capturing shared cycles to support OpenSource development and to expose them using a token that follows token standards including ICRC-1, ICRC-2, ICRC-3, and ICRC-4.
 
+The OVS Ledger is currently deployed at "q26le-iqaaa-aaaam-actsa-cai".
+
 ## Key Features
 
 - **Token Management**: Supports creating and managing the ledger for OVS according to ICRC-1, ICRC-2, ICRC-3, and ICRC-4 standards.
