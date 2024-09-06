@@ -1,11 +1,11 @@
 |ICRC|Title|Author|Discussions|Status|Type|Category|Created|
 |:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-|86|Domain Claim Standard|Austin Fatheree (@skilesare), |Draft|Standards Track||2024-04-10|
+|86|Domain Claim Standard|Austin Fatheree (@skilesare), ||Draft|Standards Track||2024-07-20|
 
 
 # ICRC-86: Domain Claim Standard
 
-ICRC-86 is a standard for claiming and managing the right control an domain and the its underlying namespaces on the Internet Computer. 
+ICRC-86 is a standard for claiming and managing the right control a domain and its underlying namespaces on the Internet Computer. 
 
 ## Introduction
 
@@ -15,7 +15,7 @@ Domain are consist of a Top-level domain prefix and a series of more specific sp
 
 #### Domains
 
-Domains are represented by a `vec text` in reverse order of a typical web address. For example, subdomain.foo.com would be ["com","foo","subdomain"].
+Domains are represented by a `vec text` in the reverse order of a typical web address. For example, subdomain.foo.com would be ["com","foo","subdomain"].
 
 Undecorated position 0 items are assumed to be standard ICANN TLDs and should be vetted against the ICANN system.
 
@@ -23,7 +23,7 @@ Decentralized TLDs managed by the ICRC-86 system are decorated with an underscor
 
 #### DomainClaimRequest
 
-A request structure used when a user or a project claims a domain for participating in the cycle sharing.
+A request structure is used when a user or a project claims a domain for participating in the cycle sharing.
 ```motoko
 type DomainClaimRequest = {
   domain: vec text;
@@ -82,7 +82,7 @@ type DomainApprovalResponse = variant {
 
 #### icrc86_claim_domain
 
-This function allows a user or a project to claim a domain for managing their domains within the system. The claim request includes the domain identifier, an set of controlling principals, and a validation code for cases where automated verification is required.
+This function allows a user or a project to claim a domain for managing their domains within the system. The claim request includes the domain identifier, a set of controlling principals, and a validation code for cases where automated verification is required.
 
 Initial requests for a validation code are made with the validationCode property null.  This provided code can then be used to verify that the requested owner owns the indicated domain.
 
@@ -116,7 +116,7 @@ This query function is designed to look up the information about a specific doma
 
 #### icrc86_namespace_look_up
 
-This query function is designed to look up highest resolution information about a specific fully qualified namespace to determine the controllers.
+This query function is designed to look up the highest resolution information about a specific fully qualified namespace to determine the controllers.
 
 **Parameters:**
 - `namespaces`: vec {vec text}; - the fully qualified namespaces for which information is requested.
@@ -200,6 +200,4 @@ record { name = "ICRC-10"; url = "https://github.com/dfinity/ICRC/ICRCs/ICRC-10"
 
 ## Future features
 
-Initial implementations may rely on administers or third party systems to detect, approve, and maintain validations of control. Eventually and automated system for ICANN lookups should be implemented.
-
-
+Initial implementations may rely on administrators or third-party systems to detect, approve, and maintain validations of control. Eventually, an automated system for ICANN lookups should be implemented.

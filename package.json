@@ -1,5 +1,5 @@
 {
-  "name": "ovs-ledger",
+  "name": "cycle-share-ledger",
   "version": "1.0.0",
   "description": "Ledger for tracking open value share",
   "main": "index.js",

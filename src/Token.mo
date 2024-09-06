@@ -33,6 +33,7 @@ import CyclesLedger "CycleLedger";
 import CMC "cmc";
 import ICRC75 "mo:icrc75-mo";
 import Service75 "mo:icrc75-mo/service";
+import TTTypes "mo:timer-tool/migrations/types";
 
 shared ({ caller = _owner }) actor class Token  (args: ?{
     icrc1 : ?ICRC1.InitArgs;
@@ -805,6 +806,7 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
       icrc2 : [ICRC2.MetaDatum];
       icrc3 : ICRC3.Stats;
       icrc4 : [ICRC4.MetaDatum];
+      icrc75 : ICRC75.Stats;
       namespaceAccounts : Nat;
       domainOwners: Nat;
       failedDeposit : [(Nat,ShareArgs)];
@@ -814,12 +816,14 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
       domainValidation : Nat;
       CyclesLedger_CANISTER_ID : Text;
       owner : Principal;
+      tt : ?TTTypes.Current.Stats;
     } {
     {
       icrc1 =  icrc1().metadata();
       icrc2 =  icrc2().metadata();
       icrc3 =  icrc3().stats();
       icrc4 =  icrc4().metadata();
+      icrc75 =  icrc75().get_stats();
       namespaceAccounts = ICRC1.Map.size(namespaceAccounts);
       domainOwners = ICRC1.Map.size(domainOwners);
       failedDeposit  = ICRC1.Vector.toArray(failedDeposit);
@@ -830,6 +834,23 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
       domainValidation = ICRC1.Map.size(domainValidation);
       CyclesLedger_CANISTER_ID = CyclesLedger_CANISTER_ID;
       owner = owner;
+      //todo: fix this as it is very ugly
+      tt = switch(icrc75().get_state().tt){
+        case(null) null;
+        case(?val) {
+          let #v0_1_0(#data(currentState)) = val else D.trap("bad state"); 
+          ?{
+            timers = TTTypes.Current.BTree.size(currentState.timeTree);
+            nextTimer = currentState.nextTimer;
+            lastExecutionTime = currentState.lastExecutionTime;
+            expectedExecutionTime = currentState.expectedExecutionTime;
+            nextActionId = currentState.nextActionId;
+            minAction = TTTypes.Current.BTree.min(currentState.timeTree);
+            cycles = 0;
+            maxExecutions = currentState.maxExecutions;
+          };
+        }
+      };
     };
   };
   
@@ -1648,7 +1669,7 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
   public type ManageListMembershipRequest = Service75.ManageListMembershipRequest;
   public type ManageListMembershipRequestItem = Service75.ManageListMembershipRequestItem;
   public type ManageListMembershipAction = Service75.ManageListMembershipAction;
-  public type ManageListPropertiesRequest = Service75.ManageListPropertiesRequest;
+  public type ManageListPropertyRequest = Service75.ManageListPropertyRequest;
   public type ManageListMembershipResponse = Service75.ManageListMembershipResponse;
   public type ManageListPropertyRequestItem = Service75.ManageListPropertyRequestItem;
   public type ManageListPropertyResponse = Service75.ManageListPropertyResponse;
@@ -1779,7 +1800,7 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
     return await* icrc75().manage_list_membership(msg.caller, request, ?#Sync(canChangeMembers));
   };
 
-  public shared(msg) func icrc75_manage_list_properties(request: ManageListPropertiesRequest) : async ManageListPropertyResponse {
+  public shared(msg) func icrc75_manage_list_properties(request: ManageListPropertyRequest) : async ManageListPropertyResponse {
     return await* icrc75().manage_list_properties(msg.caller, request, ?#Sync(canChangeProperty));
   };
 
