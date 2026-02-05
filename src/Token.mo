@@ -793,12 +793,11 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
     //can only be called once
     D.print(debug_show("admin_init called",_init));
 
-    if(_init == false){
       let thisActor : actor {
         admin_init : () -> async ();
       } = actor(Principal.toText(Principal.fromActor(this)));
       await thisActor.admin_init();
-    };
+
   };
 
   public query func stats() : async {
@@ -858,7 +857,7 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
     //can only be called once
     D.print(debug_show("admin_init called",_init));
 
-    if(_init == false){
+   
       D.print(debug_show("admin_init called2",_init));
       _init := true;
       //ensure metadata has been registered
@@ -886,7 +885,7 @@ shared ({ caller = _owner }) actor class Token  (args: ?{
 
       //uncomment the following line to register the transfer_listener
       //icrc1().register_transfer_from_listener("my_namespace", transfer_from_listener);
-    };
+
     
   };
 

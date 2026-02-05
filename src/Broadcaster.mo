@@ -7,9 +7,6 @@ import Text "mo:base/Text";
 
 import Nat "mo:base/Nat";
 
-
-
-
 shared ({ caller = _owner }) actor class Broadcaster  () = this{
 
   public type ShareResult = {
