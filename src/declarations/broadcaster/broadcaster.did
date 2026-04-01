@@ -16,9 +16,10 @@ type ShareCycleError =
  };
 type Broadcaster = 
  service {
-   broadcast: (text, vec record {
-                           text;
-                           nat;
-                         }, nat) -> (ShareResult);
+   broadcast: (cycleShareLedger: text, items: vec record {
+                                                    text;
+                                                    nat;
+                                                  }, cycles: nat) ->
+    (ShareResult);
  };
 service : () -> Broadcaster

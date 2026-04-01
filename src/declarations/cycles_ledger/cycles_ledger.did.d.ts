@@ -43,7 +43,14 @@ export interface CanisterSettings {
 export type ChangeIndexId = { 'SetTo' : Principal } |
   { 'Unset' : null };
 export interface CmcCreateCanisterArgs {
+  /**
+   * Optional instructions to select on which subnet the new canister will be created on.
+   */
   'subnet_selection' : [] | [SubnetSelection],
+  /**
+   * Optional canister settings that, if set, are applied to the newly created canister.
+   * If not specified, the caller is the controller of the canister and the other settings are set to default values.
+   */
   'settings' : [] | [CanisterSettings],
 }
 export interface CreateCanisterArgs {
@@ -57,7 +64,13 @@ export type CreateCanisterError = {
   } |
   { 'TemporarilyUnavailable' : null } |
   {
-    'Duplicate' : { 'duplicate_of' : bigint, 'canister_id' : [] | [Principal] }
+    'Duplicate' : {
+      'duplicate_of' : bigint,
+      /**
+       * If the original transaction created a canister then this field will contain the canister id.
+       */
+      'canister_id' : [] | [Principal],
+    }
   } |
   { 'CreatedInFuture' : { 'ledger_time' : bigint } } |
   {
@@ -89,7 +102,13 @@ export type CreateCanisterFromError = {
   { 'TemporarilyUnavailable' : null } |
   { 'InsufficientAllowance' : { 'allowance' : bigint } } |
   {
-    'Duplicate' : { 'duplicate_of' : bigint, 'canister_id' : [] | [Principal] }
+    'Duplicate' : {
+      'duplicate_of' : bigint,
+      /**
+       * If the original transaction created a canister then this field will contain the canister id.
+       */
+      'canister_id' : [] | [Principal],
+    }
   } |
   { 'CreatedInFuture' : { 'ledger_time' : bigint } } |
   { 'TooOld' : null } |
@@ -99,7 +118,13 @@ export interface CreateCanisterSuccess {
   'canister_id' : Principal,
 }
 export interface DataCertificate {
+  /**
+   * See https://internetcomputer.org/docs/current/references/ic-interface-spec#certification
+   */
   'certificate' : Uint8Array | number[],
+  /**
+   * CBOR encoded hash_tree
+   */
   'hash_tree' : Uint8Array | number[],
 }
 export interface DepositArgs {
@@ -110,14 +135,43 @@ export interface DepositResult {
   'balance' : bigint,
   'block_index' : BlockIndex,
 }
-export interface GetArchivesArgs { 'from' : [] | [Principal] }
+export interface GetArchivesArgs {
+  /**
+   * The last archive seen by the client.
+   * The ledger will return archives coming
+   * after this one if set, otherwise it
+   * will return the first archives.
+   */
+  'from' : [] | [Principal],
+}
 export type GetArchivesResult = Array<
-  { 'end' : bigint, 'canister_id' : Principal, 'start' : bigint }
+  {
+    /**
+     * The last block in the archive
+     */
+    'end' : bigint,
+    /**
+     * The id of the archive
+     */
+    'canister_id' : Principal,
+    /**
+     * The first block in the archive
+     */
+    'start' : bigint,
+  }
 >;
 export type GetBlocksArgs = Array<{ 'start' : bigint, 'length' : bigint }>;
 export interface GetBlocksResult {
+  /**
+   * Total number of blocks in the
+   * block log.
+   */
   'log_length' : bigint,
   'blocks' : Array<{ 'id' : bigint, 'block' : Value }>,
+  /**
+   * The archived_blocks vector is always going to be empty
+   * for this ledger because there is no archive node.
+   */
   'archived_blocks' : Array<
     { 'args' : GetBlocksArgs, 'callback' : [Principal, string] }
   >,
@@ -151,8 +205,18 @@ export type RejectionCode = { 'NoError' : null } |
   { 'SysFatal' : null } |
   { 'CanisterReject' : null };
 export interface SubnetFilter { 'subnet_type' : [] | [string] }
-export type SubnetSelection = { 'Filter' : SubnetFilter } |
-  { 'Subnet' : { 'subnet' : Principal } };
+export type SubnetSelection = {
+    /**
+     * Choose a random subnet that satisfies the specified properties.
+     */
+    'Filter' : SubnetFilter
+  } |
+  {
+    /**
+     * / Choose a specific subnet
+     */
+    'Subnet' : { 'subnet' : Principal }
+  };
 export interface SupportedBlockType { 'url' : string, 'block_type' : string }
 export interface SupportedStandard { 'url' : string, 'name' : string }
 export interface TransferArgs {

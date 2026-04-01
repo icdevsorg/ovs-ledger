@@ -119,8 +119,13 @@
     },
     "token": {
       "args": "-v --incremental-gc",
+      "gzip": true,
       "main": "src/Token.mo",
       "type": "motoko"
+    },
+    "icrc_index": {
+      "type": "motoko",
+      "main": "../index.mo/src/Canisters/Index.mo"
     }
   },
   "defaults": {
@@ -130,6 +135,15 @@
     },
     "replica": {
       "subnet_type": "system"
+    }
+  },
+   "networks": {
+    "local": {
+      "bind": "127.0.0.1:8080",
+      "type": "ephemeral",
+      "replica": {
+        "subnet_type": "system"
+      }
     }
   },
   "version": 1

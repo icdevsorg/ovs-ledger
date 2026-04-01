@@ -6,26 +6,18 @@ export interface Account {
   'owner' : Principal,
   'subaccount' : [] | [Subaccount],
 }
-export interface Account__1 {
+export interface Account__7 {
   'owner' : Principal,
-  'subaccount' : [] | [Subaccount__1],
+  'subaccount' : [] | [Uint8Array | number[]],
 }
-export interface Account__2 {
-  'owner' : Principal,
-  'subaccount' : [] | [Subaccount__2],
+export interface Action {
+  'aSync' : [] | [bigint],
+  'actionType' : string,
+  'params' : Uint8Array | number[],
+  'retries' : bigint,
 }
-export interface Account__3 {
-  'owner' : Principal,
-  'subaccount' : [] | [Subaccount],
-}
-export interface Account__4 {
-  'owner' : Principal,
-  'subaccount' : [] | [Subaccount__3],
-}
-export interface Account__5 {
-  'owner' : Principal,
-  'subaccount' : [] | [Subaccount__4],
-}
+export type ActionDetail = [ActionId, Action];
+export interface ActionId { 'id' : bigint, 'time' : Time }
 export interface AdvancedSettings {
   'existing_balances' : Array<[Account, Balance]>,
   'burned_tokens' : Balance,
@@ -35,21 +27,36 @@ export interface AdvancedSettings {
   'fee_collector_block' : bigint,
 }
 export interface AdvancedSettings__1 {
-  'existing_approvals' : Array<[[Account__1, Account__1], ApprovalInfo]>,
+  'existing_approvals' : Array<[[Account, Account], ApprovalInfo]>,
 }
 export interface Allowance {
   'allowance' : bigint,
   'expires_at' : [] | [bigint],
 }
-export interface AllowanceArgs {
-  'account' : Account__1,
-  'spender' : Account__1,
+export interface AllowanceArgs { 'account' : Account, 'spender' : Account }
+export interface AllowanceDetail {
+  'from_account' : Account,
+  'to_spender' : Account,
+  'allowance' : bigint,
+  'expires_at' : [] | [bigint],
 }
+export type AllowanceResult = { 'Ok' : Array<AllowanceDetail> } |
+  { 'Err' : GetAllowancesError };
 export interface ApprovalInfo {
   'from_subaccount' : [] | [Uint8Array | number[]],
   'amount' : bigint,
   'expires_at' : [] | [bigint],
-  'spender' : Account__1,
+  'spender' : Account,
+}
+export interface Approve {
+  'fee' : [] | [bigint],
+  'from' : Account__7,
+  'memo' : [] | [Uint8Array | number[]],
+  'created_at_time' : [] | [bigint],
+  'amount' : bigint,
+  'expected_allowance' : [] | [bigint],
+  'expires_at' : [] | [bigint],
+  'spender' : Account__7,
 }
 export interface ApproveArgs {
   'fee' : [] | [bigint],
@@ -59,7 +66,7 @@ export interface ApproveArgs {
   'amount' : bigint,
   'expected_allowance' : [] | [bigint],
   'expires_at' : [] | [bigint],
-  'spender' : Account__1,
+  'spender' : Account,
 }
 export type ApproveError = {
     'GenericError' : { 'message' : string, 'error_code' : bigint }
@@ -76,22 +83,27 @@ export type ApproveResponse = { 'Ok' : bigint } |
   { 'Err' : ApproveError };
 export interface ArchivedTransactionResponse {
   'args' : Array<TransactionRange>,
-  'callback' : GetTransactionsFn,
+  'callback' : [Principal, string],
 }
-export type AuthorizedRequestItem = [ListItem__2, Array<Array<List__2>>];
+export type AuthorizedRequestItem = [ListItem__2, Array<Array<List>>];
 export type Balance = bigint;
-export interface BalanceQueryArgs { 'accounts' : Array<Account__5> }
+export interface BalanceQueryArgs { 'accounts' : Array<Account> }
 export type BalanceQueryResult = Array<bigint>;
 export type BalanceResult = { 'Ok' : bigint } |
-  { 'Err' : { 'NotAvailable' : { 'message' : string } } };
-export type Balance__1 = bigint;
+  { 'Err' : string };
 export interface BlockType { 'url' : string, 'block_type' : string }
-export interface BlockType__1 { 'url' : string, 'block_type' : string }
 export interface Burn {
   'from' : Account,
   'memo' : [] | [Memo],
   'created_at_time' : [] | [Timestamp],
   'amount' : Balance,
+}
+export interface Burn__1 {
+  'from' : Account__7,
+  'memo' : [] | [Uint8Array | number[]],
+  'created_at_time' : [] | [bigint],
+  'amount' : bigint,
+  'spender' : [] | [Account__7],
 }
 export type CandyShared = { 'Int' : bigint } |
   { 'Map' : Array<[string, CandyShared]> } |
@@ -148,9 +160,8 @@ export type DataItem = { 'Int' : bigint } |
   { 'ValueMap' : Array<[CandyShared, CandyShared]> } |
   { 'Class' : Array<PropertyShared> };
 export type DataItemMap = Array<[string, DataItem__1]>;
-export type DataItemMap__1 = Array<[string, DataItem__1]>;
 export type DataItem__1 = { 'Int' : bigint } |
-  { 'Map' : DataItemMap__1 } |
+  { 'Map' : DataItemMap } |
   { 'Nat' : bigint } |
   { 'Set' : Array<DataItem__1> } |
   { 'Nat16' : number } |
@@ -176,20 +187,13 @@ export type DataItem__1 = { 'Int' : bigint } |
   { 'Class' : Array<PropertyShared__1> };
 export interface DepositArgs {
   'token' : Token84,
-  'subaccount' : [] | [Uint8Array | number[]],
+  'from' : [] | [
+    { 'owner' : Principal, 'subaccount' : [] | [Uint8Array | number[]] }
+  ],
   'amount' : bigint,
+  'expected_fee' : [] | [bigint],
 }
-export type DepositResponse = { 'Ok' : DepositResult } |
-  {
-    'Err' : { 'TransferError' : { 'message' : string } } |
-      { 'AmountBelowMinimum' : null } |
-      { 'CallLedgerError' : { 'message' : string } }
-  };
-export interface DepositResult {
-  'credit_inc' : bigint,
-  'txid' : bigint,
-  'credit' : bigint,
-}
+export interface DepositResponse { 'txid' : [] | [bigint], 'credit' : bigint }
 export type Domain = Array<string>;
 export interface DomainApprovalRequest {
   'domain' : Domain,
@@ -203,7 +207,7 @@ export type DomainApprovalResponse = { 'Ok' : null } |
 export interface DomainClaimRequest {
   'controllers' : [] | [Array<Principal>],
   'domain' : Domain,
-  'gateAccount' : [] | [Account__3],
+  'gateAccount' : [] | [Account],
   'validationCode' : [] | [string],
 }
 export type DomainClaimResponse = {
@@ -236,9 +240,18 @@ export type Fee = { 'Environment' : null } |
 export type Fee__1 = { 'ICRC1' : null } |
   { 'Environment' : null } |
   { 'Fixed' : bigint };
-export type Fee__2 = { 'ICRC1' : null } |
-  { 'Environment' : null } |
-  { 'Fixed' : bigint };
+export interface GetAllowancesArgs {
+  'take' : [] | [bigint],
+  'prev_spender' : [] | [Account],
+  'from_account' : [] | [Account],
+}
+export type GetAllowancesError = {
+    'GenericError' : { 'message' : string, 'error_code' : bigint }
+  } |
+  { 'AccessDenied' : { 'reason' : string } };
+export interface GetArchiveTransactionsResponse {
+  'transactions' : Array<Transaction__1>,
+}
 export interface GetArchivesArgs { 'from' : [] | [Principal] }
 export type GetArchivesResult = Array<GetArchivesResultItem>;
 export interface GetArchivesResultItem {
@@ -247,23 +260,34 @@ export interface GetArchivesResultItem {
   'start' : bigint,
 }
 export type GetBlocksArgs = Array<TransactionRange>;
+export interface GetBlocksRequest { 'start' : bigint, 'length' : bigint }
 export interface GetBlocksResult {
   'log_length' : bigint,
   'blocks' : Array<{ 'id' : bigint, 'block' : Value__1 }>,
   'archived_blocks' : Array<ArchivedTransactionResponse>,
 }
+export type GetLegacyArchiveTransactionFunction = ActorMethod<
+  [GetBlocksRequest],
+  GetArchiveTransactionsResponse
+>;
 export type GetTransactionsFn = ActorMethod<
   [Array<TransactionRange>],
   GetTransactionsResult
 >;
+export interface GetTransactionsResponse {
+  'first_index' : bigint,
+  'log_length' : bigint,
+  'transactions' : Array<Transaction__1>,
+  'archived_transactions' : Array<LegacyArchivedRange>,
+}
 export interface GetTransactionsResult {
   'log_length' : bigint,
   'blocks' : Array<{ 'id' : bigint, 'block' : Value__1 }>,
   'archived_blocks' : Array<ArchivedTransactionResponse>,
 }
-export type ICRC16Map = Array<[string, DataItem]>;
+export type ICRC16Map = Array<ICRC16MapItem>;
+export type ICRC16MapItem = [string, DataItem];
 export type Identity = Principal;
-export type Identity__1 = Principal;
 export type IndexType = { 'Stable' : null } |
   { 'StableTyped' : null } |
   { 'Managed' : null };
@@ -290,11 +314,14 @@ export interface InitArgs__1 {
   'advanced_settings' : [] | [AdvancedSettings__1],
   'max_allowance' : [] | [MaxAllowance],
   'max_approvals' : [] | [bigint],
+  'icrc103_max_take_value' : [] | [bigint],
+  'cleanup_on_zero_balance' : [] | [boolean],
+  'icrc103_public_allowances' : [] | [boolean],
   'max_approvals_per_account' : [] | [bigint],
   'settle_to_approvals' : [] | [bigint],
+  'cleanup_interval' : [] | [bigint],
 }
-export type InitArgs__2 = [] | [InitArgs__3];
-export interface InitArgs__3 {
+export interface InitArgs__2 {
   'maxRecordsToArchive' : bigint,
   'archiveIndexType' : IndexType,
   'maxArchivePages' : bigint,
@@ -305,46 +332,60 @@ export interface InitArgs__3 {
   'archiveControllers' : [] | [[] | [Array<Principal>]],
   'supportedBlocks' : Array<BlockType>,
 }
-export interface InitArgs__4 {
-  'fee' : [] | [Fee__2],
+export interface InitArgs__3 {
+  'fee' : [] | [Fee__1],
   'max_balances' : [] | [bigint],
   'max_transfers' : [] | [bigint],
 }
-export type InitArgs__5 = [] | [
-  { 'existingNamespaces' : [] | [Array<NamespaceRecordShared>] }
-];
+export interface InitArgs__4 {
+  'existingNamespaces' : [] | [Array<NamespaceRecordShared>],
+  'cycleShareTimerID' : [] | [bigint],
+  'certificateNonce' : [] | [bigint],
+}
+export interface LedgerInfoShared {
+  'fee' : Fee__1,
+  'max_allowance' : [] | [MaxAllowance],
+  'max_approvals' : bigint,
+  'icrc103_max_take_value' : bigint,
+  'cleanup_on_zero_balance' : [] | [boolean],
+  'icrc103_public_allowances' : boolean,
+  'max_approvals_per_account' : bigint,
+  'settle_to_approvals' : bigint,
+  'cleanup_interval' : [] | [bigint],
+}
+export interface LegacyArchivedRange {
+  'callback' : [Principal, string],
+  'start' : bigint,
+  'length' : bigint,
+}
 export type List = string;
 export type ListItem = { 'List' : List } |
   { 'DataItem' : DataItem } |
-  { 'Account' : Account__2 } |
+  { 'Account' : Account } |
   { 'Identity' : Identity };
-export type ListItem__1 = { 'List' : List } |
-  { 'DataItem' : DataItem } |
-  { 'Account' : Account__2 } |
-  { 'Identity' : Identity };
-export type ListItem__2 = { 'List' : List__2 } |
+export type ListItem__2 = { 'List' : List } |
   { 'DataItem' : DataItem__1 } |
-  { 'Account' : Account__4 } |
-  { 'Identity' : Identity__1 };
-export interface ListRecord {
-  'metadata' : [] | [DataItemMap__1],
-  'list' : List__2,
-}
-export type List__1 = string;
-export type List__2 = string;
-export type ManageListMembershipAction = { 'Add' : ListItem__2 } |
-  { 'Remove' : ListItem__2 };
-export type ManageListMembershipError = { 'NotFound' : null } |
+  { 'Account' : Account } |
+  { 'Identity' : Identity };
+export interface ListRecord { 'metadata' : [] | [DataItemMap], 'list' : List }
+export type ManageListMembershipAction = {
+    'Add' : [ListItem__2, [] | [DataItemMap]]
+  } |
+  { 'Remove' : ListItem__2 } |
+  { 'Update' : [ListItem__2, MapModifier] };
+export type ManageListMembershipError = { 'TooManyRequests' : null } |
+  { 'NotFound' : null } |
   { 'Unauthorized' : null } |
-  { 'Other' : string };
+  { 'Other' : string } |
+  { 'Exists' : null };
 export type ManageListMembershipRequest = Array<
   ManageListMembershipRequestItem
 >;
 export interface ManageListMembershipRequestItem {
   'action' : ManageListMembershipAction,
-  'list' : List__2,
+  'list' : List,
   'memo' : [] | [Uint8Array | number[]],
-  'from_subaccount' : [] | [Subaccount__3],
+  'from_subaccount' : [] | [Subaccount],
   'created_at_time' : [] | [bigint],
 }
 export type ManageListMembershipResponse = Array<ManageListMembershipResult>;
@@ -352,13 +393,14 @@ export type ManageListMembershipResult = [] | [
   { 'Ok' : TransactionID } |
     { 'Err' : ManageListMembershipError }
 ];
-export type ManageListPropertiesRequest = Array<ManageListPropertyRequestItem>;
-export type ManageListPropertyError = { 'IllegalAdmin' : null } |
+export type ManageListPropertyError = { 'TooManyRequests' : null } |
+  { 'IllegalAdmin' : null } |
   { 'IllegalPermission' : null } |
   { 'NotFound' : null } |
   { 'Unauthorized' : null } |
   { 'Other' : string } |
   { 'Exists' : null };
+export type ManageListPropertyRequest = Array<ManageListPropertyRequestItem>;
 export type ManageListPropertyRequestAction = {
     'Metadata' : { 'key' : string, 'value' : [] | [DataItem__1] }
   } |
@@ -375,16 +417,16 @@ export type ManageListPropertyRequestAction = {
   { 'Delete' : null } |
   {
     'Create' : {
-      'members' : Array<ListItem__2>,
+      'members' : Array<[ListItem__2, [] | [DataItemMap]]>,
       'admin' : [] | [ListItem__2],
-      'metadata' : DataItemMap__1,
+      'metadata' : DataItemMap,
     }
   };
 export interface ManageListPropertyRequestItem {
   'action' : ManageListPropertyRequestAction,
-  'list' : List__2,
+  'list' : List,
   'memo' : [] | [Uint8Array | number[]],
-  'from_subaccount' : [] | [Subaccount__3],
+  'from_subaccount' : [] | [Subaccount],
   'created_at_time' : [] | [bigint],
 }
 export type ManageListPropertyResponse = Array<ManageListPropertyResult>;
@@ -402,54 +444,47 @@ export type ManageResult = [] | [
   { 'Ok' : null } |
     { 'Err' : ManageResultError }
 ];
-export type ManageResultError = { 'Unauthorized' : null } |
+export type ManageResultError = { 'TooManyRequests' : null } |
+  { 'Unauthorized' : null } |
   { 'Other' : string };
+export type Map = Array<[string, Value__2]>;
+export type MapModifier = [string, [] | [DataItem__1]];
 export type MaxAllowance = { 'TotalSupply' : null } |
   { 'Fixed' : bigint };
 export type Memo = Uint8Array | number[];
 export type MetaDatum = [string, Value];
-export type MetaDatum__1 = [string, Value];
-export type MetaDatum__2 = [string, Value];
 export interface Mint {
   'to' : Account,
   'memo' : [] | [Memo],
   'created_at_time' : [] | [Timestamp],
   'amount' : Balance,
 }
+export interface Mint__1 {
+  'to' : Account__7,
+  'memo' : [] | [Uint8Array | number[]],
+  'created_at_time' : [] | [bigint],
+  'amount' : bigint,
+}
 export interface NamespaceLookupResponse {
-  'controllers' : Array<Principal>,
-  'domain' : Domain,
+  'balance' : bigint,
+  'account' : Account,
+  'namespace' : Array<string>,
 }
 export interface NamespaceRecordShared {
   'permissions' : PermissionList,
-  'members' : Array<ListItem>,
+  'members' : Array<[ListItem, [] | [ICRC16Map]]>,
   'metadata' : ICRC16Map,
   'namespace' : string,
 }
-export type NotifyResult = {
-    'Ok' : { 'credit_inc' : bigint, 'credit' : bigint, 'deposit_inc' : bigint }
-  } |
-  {
-    'Err' : { 'NotAvailable' : { 'message' : string } } |
-      { 'CallLedgerError' : { 'message' : string } }
-  };
+export interface NotifyResult { 'credit_inc' : bigint, 'credit' : bigint }
 export type Permission = { 'Read' : null } |
   { 'Write' : null } |
   { 'Admin' : null } |
   { 'Permissions' : null };
 export type PermissionList = Array<PermissionListItem>;
 export type PermissionListItem = [Permission, ListItem];
-export type PermissionListItem__1 = [Permission__2, ListItem__2];
-export type PermissionListItem__2 = [Permission__2, ListItem__2];
-export type PermissionList__1 = Array<PermissionListItem__2>;
-export type Permission__1 = { 'Read' : null } |
-  { 'Write' : null } |
-  { 'Admin' : null } |
-  { 'Permissions' : null };
-export type Permission__2 = { 'Read' : null } |
-  { 'Write' : null } |
-  { 'Admin' : null } |
-  { 'Permissions' : null };
+export type PermissionListItem__1 = [Permission, ListItem__2];
+export type PermissionList__1 = Array<PermissionListItem__1>;
 export interface PropertyShared {
   'value' : CandyShared,
   'name' : string,
@@ -459,6 +494,76 @@ export interface PropertyShared__1 {
   'value' : DataItem__1,
   'name' : string,
   'immutable' : boolean,
+}
+export interface ReplayBlock {
+  'id' : bigint,
+  'ts' : bigint,
+  'tx' : ReplayTx,
+  'btype' : string,
+}
+export type ReplayResult = {
+    'Ok' : { 'lastIndex' : bigint, 'processed' : bigint }
+  } |
+  {
+    'Err' : { 'InvalidBlock' : { 'index' : bigint, 'reason' : string } } |
+      { 'NotAuthorized' : null } |
+      { 'AlreadyMigrated' : null }
+  };
+export type ReplayTx = {
+    'burn' : {
+      'amt' : bigint,
+      'from' : Account,
+      'memo' : [] | [Uint8Array | number[]],
+    }
+  } |
+  {
+    'mint' : {
+      'to' : Account,
+      'amt' : bigint,
+      'memo' : [] | [Uint8Array | number[]],
+    }
+  } |
+  {
+    'xfer' : {
+      'to' : Account,
+      'amt' : bigint,
+      'fee' : [] | [bigint],
+      'from' : Account,
+      'memo' : [] | [Uint8Array | number[]],
+    }
+  } |
+  {
+    'approve' : {
+      'amt' : bigint,
+      'fee' : [] | [bigint],
+      'from' : Account,
+      'memo' : [] | [Uint8Array | number[]],
+      'expires_at' : [] | [bigint],
+      'spender' : Account,
+    }
+  } |
+  {
+    'xfer_from' : {
+      'to' : Account,
+      'amt' : bigint,
+      'fee' : [] | [bigint],
+      'from' : Account,
+      'memo' : [] | [Uint8Array | number[]],
+      'spender' : Account,
+    }
+  };
+export interface RosettaArchivedRange {
+  'callback' : [Principal, string],
+  'start' : bigint,
+  'length' : bigint,
+}
+export interface RosettaBlockRange { 'blocks' : Array<Value__2> }
+export interface RosettaGetBlocksResponse {
+  'certificate' : [] | [Uint8Array | number[]],
+  'first_index' : bigint,
+  'blocks' : Array<Value__2>,
+  'chain_length' : bigint,
+  'archived_blocks' : Array<RosettaArchivedRange>,
 }
 export type ShareArgs = Array<[string, bigint]>;
 export type ShareCycleError = { 'NotEnoughCycles' : [bigint, bigint] } |
@@ -484,12 +589,45 @@ export interface Stats {
   'supportedBlocks' : Array<BlockType>,
   'firstIndex' : bigint,
 }
+export interface Stats__1 {
+  'tt' : Stats__2,
+  'permittedDrift' : bigint,
+  'defaultTake' : bigint,
+  'owner' : Principal,
+  'memberIndexCount' : bigint,
+  'permissionsIndexCount' : bigint,
+  'cycleShareTimerID' : [] | [bigint],
+  'namespaceStoreCount' : bigint,
+  'maxTake' : bigint,
+  'txWindow' : bigint,
+}
+export interface Stats__2 {
+  'timers' : bigint,
+  'maxExecutions' : bigint,
+  'minAction' : [] | [ActionDetail],
+  'cycles' : bigint,
+  'nextActionId' : bigint,
+  'nextTimer' : [] | [TimerId],
+  'expectedExecutionTime' : [] | [Time],
+  'lastExecutionTime' : Time,
+}
+export interface Stats__3 {
+  'fee' : Fee__1,
+  'max_balances' : bigint,
+  'max_transfers' : bigint,
+}
+export interface Stats__4 {
+  'token_approvals_count' : bigint,
+  'ledger_info' : LedgerInfoShared,
+  'indexes' : {
+    'spender_to_approval_account_count' : bigint,
+    'owner_to_approval_account_count' : bigint,
+  },
+}
 export type Subaccount = Uint8Array | number[];
-export type Subaccount__1 = Uint8Array | number[];
-export type Subaccount__2 = Uint8Array | number[];
-export type Subaccount__3 = Uint8Array | number[];
-export type Subaccount__4 = Uint8Array | number[];
 export interface SupportedStandard { 'url' : string, 'name' : string }
+export type Time = bigint;
+export type TimerId = bigint;
 export type Timestamp = bigint;
 export interface Tip {
   'last_block_index' : Uint8Array | number[],
@@ -499,7 +637,7 @@ export interface Tip {
 export interface Token {
   'admin_init' : ActorMethod<[], undefined>,
   'admin_update_cyclesLedger' : ActorMethod<[string], boolean>,
-  'admin_update_devAccount' : ActorMethod<[Account__3], boolean>,
+  'admin_update_devAccount' : ActorMethod<[Account], boolean>,
   'admin_update_icrc1' : ActorMethod<
     [Array<UpdateLedgerInfoRequest__2>],
     Array<boolean>
@@ -514,48 +652,121 @@ export interface Token {
   >,
   'admin_update_minCycles' : ActorMethod<[bigint], boolean>,
   'admin_update_owner' : ActorMethod<[Principal], boolean>,
+  'archives' : ActorMethod<
+    [],
+    Array<
+      {
+        'block_range_end' : bigint,
+        'canister_id' : Principal,
+        'block_range_start' : bigint,
+      }
+    >
+  >,
   'deposit_cycles' : ActorMethod<[], undefined>,
+  /**
+   * / Mark replay as complete - disables further replay calls
+   */
+  'finalize_replay' : ActorMethod<
+    [],
+    { 'Ok' : null } |
+      { 'Err' : { 'NotAuthorized' : null } }
+  >,
+  'get_blocks' : ActorMethod<
+    [{ 'start' : bigint, 'length' : bigint }],
+    RosettaGetBlocksResponse
+  >,
   'get_cycles' : ActorMethod<[], bigint>,
-  'get_data_certificate' : ActorMethod<
+  'get_icrc85_stats' : ActorMethod<
     [],
     {
-      'certificate' : [] | [Uint8Array | number[]],
-      'hash_tree' : Uint8Array | number[],
+      'activeActions' : bigint,
+      'nextCycleActionId' : [] | [bigint],
+      'lastActionReported' : [] | [bigint],
     }
   >,
   'get_tip' : ActorMethod<[], Tip>,
+  'get_transactions' : ActorMethod<
+    [{ 'start' : bigint, 'length' : bigint }],
+    GetTransactionsResponse
+  >,
+  'icrc103_get_allowances' : ActorMethod<[GetAllowancesArgs], AllowanceResult>,
   'icrc10_supported_standards' : ActorMethod<[], Array<SupportedStandard>>,
-  'icrc1_balance_of' : ActorMethod<[Account__3], Balance__1>,
+  'icrc130_get_allowances' : ActorMethod<[GetAllowancesArgs], AllowanceResult>,
+  'icrc1_balance_of' : ActorMethod<[Account], Balance>,
   'icrc1_decimals' : ActorMethod<[], number>,
-  'icrc1_fee' : ActorMethod<[], Balance__1>,
+  'icrc1_fee' : ActorMethod<[], Balance>,
   'icrc1_metadata' : ActorMethod<[], Array<MetaDatum>>,
-  'icrc1_minting_account' : ActorMethod<[], [] | [Account__3]>,
+  'icrc1_minting_account' : ActorMethod<[], [] | [Account]>,
   'icrc1_name' : ActorMethod<[], string>,
   'icrc1_supported_standards' : ActorMethod<[], Array<SupportedStandard>>,
   'icrc1_symbol' : ActorMethod<[], string>,
-  'icrc1_total_supply' : ActorMethod<[], Balance__1>,
-  'icrc1_transfer' : ActorMethod<[TransferArgs__1], TransferResult>,
+  'icrc1_total_supply' : ActorMethod<[], Balance>,
+  'icrc1_transfer' : ActorMethod<[TransferArgs], TransferResult>,
   'icrc2_allowance' : ActorMethod<[AllowanceArgs], Allowance>,
   'icrc2_approve' : ActorMethod<[ApproveArgs], ApproveResponse>,
+  'icrc2_get_stats' : ActorMethod<[], Stats__4>,
   'icrc2_transfer_from' : ActorMethod<[TransferFromArgs], TransferFromResponse>,
   'icrc3_get_archives' : ActorMethod<[GetArchivesArgs], GetArchivesResult>,
   'icrc3_get_blocks' : ActorMethod<[GetBlocksArgs], GetBlocksResult>,
+  'icrc3_get_stats' : ActorMethod<[], Stats>,
   'icrc3_get_tip_certificate' : ActorMethod<[], [] | [DataCertificate]>,
-  'icrc3_supported_block_types' : ActorMethod<[], Array<BlockType__1>>,
+  'icrc3_supported_block_types' : ActorMethod<[], Array<BlockType>>,
   'icrc4_balance_of_batch' : ActorMethod<
     [BalanceQueryArgs],
     BalanceQueryResult
   >,
+  'icrc4_get_stats' : ActorMethod<[], Stats__3>,
   'icrc4_maximum_query_batch_size' : ActorMethod<[], [] | [bigint]>,
   'icrc4_maximum_update_batch_size' : ActorMethod<[], [] | [bigint]>,
   'icrc4_transfer_batch' : ActorMethod<
     [TransferBatchArgs],
     TransferBatchResults
   >,
+  'icrc75_get_icrc85_stats' : ActorMethod<
+    [],
+    [] | [
+      {
+        'activeActions' : bigint,
+        'nextCycleActionId' : [] | [bigint],
+        'lastActionReported' : [] | [bigint],
+      }
+    ]
+  >,
+  'icrc75_get_list_lists' : ActorMethod<
+    [List, [] | [List], [] | [bigint]],
+    Array<List>
+  >,
+  'icrc75_get_list_members_admin' : ActorMethod<
+    [List, [] | [ListItem], [] | [bigint]],
+    Array<[ListItem, [] | [DataItemMap]]>
+  >,
+  'icrc75_get_list_permissions_admin' : ActorMethod<
+    [List, [] | [Permission], [] | [PermissionListItem__1], [] | [bigint]],
+    PermissionList__1
+  >,
+  'icrc75_get_lists' : ActorMethod<
+    [[] | [string], boolean, [] | [List], [] | [bigint]],
+    Array<ListRecord>
+  >,
+  'icrc75_get_stats' : ActorMethod<[], Stats__1>,
+  'icrc75_is_member' : ActorMethod<
+    [Array<AuthorizedRequestItem>],
+    Array<boolean>
+  >,
+  'icrc75_manage' : ActorMethod<[ManageRequest], ManageResponse>,
+  'icrc75_manage_list_membership' : ActorMethod<
+    [ManageListMembershipRequest],
+    ManageListMembershipResponse
+  >,
   'icrc75_manage_list_properties' : ActorMethod<
-    [ManageListPropertiesRequest],
+    [ManageListPropertyRequest],
     ManageListPropertyResponse
   >,
+  'icrc75_member_of' : ActorMethod<
+    [ListItem, [] | [List], [] | [bigint]],
+    Array<List>
+  >,
+  'icrc75_metadata' : ActorMethod<[], DataItemMap>,
   'icrc84_all_credits' : ActorMethod<
     [[] | [Token84], [] | [bigint]],
     Array<[Token84, bigint]>
@@ -570,8 +781,8 @@ export interface Token {
   'icrc84_token_info' : ActorMethod<[Token84], TokenInfo>,
   'icrc84_trackedDeposit' : ActorMethod<[Token84], BalanceResult>,
   'icrc84_withdraw' : ActorMethod<[WithdrawArgs], WithdrawResult>,
-  'icrc85_namespace_account' : ActorMethod<[string], Account__3>,
   'icrc85_deposit_cycles' : ActorMethod<[ShareArgs], ShareResult>,
+  'icrc85_namespace_account' : ActorMethod<[string], Account>,
   'icrc86_approve_domain' : ActorMethod<
     [DomainApprovalRequest],
     DomainApprovalResponse
@@ -588,67 +799,33 @@ export interface Token {
     [Array<Array<string>>],
     Array<[] | [NamespaceLookupResponse]>
   >,
-  'icrc_75_get_list_lists' : ActorMethod<
-    [List__1, [] | [List__1], [] | [bigint]],
-    Array<List__1>
-  >,
-  'icrc_75_get_list_members_admin' : ActorMethod<
-    [List__1, [] | [ListItem__1], [] | [bigint]],
-    Array<ListItem__1>
-  >,
-  'icrc_75_get_list_permissions_admin' : ActorMethod<
-    [
-      List__1,
-      [] | [Permission__1],
-      [] | [PermissionListItem__1],
-      [] | [bigint],
-    ],
-    PermissionList__1
-  >,
-  'icrc_75_get_lists' : ActorMethod<
-    [[] | [string], boolean, [] | [List__1], [] | [bigint]],
-    Array<ListRecord>
-  >,
-  'icrc_75_is_member' : ActorMethod<
-    [Array<AuthorizedRequestItem>],
-    Array<boolean>
-  >,
-  'icrc_75_manage' : ActorMethod<[ManageRequest], ManageResponse>,
-  'icrc_75_manage_list_membership' : ActorMethod<
-    [ManageListMembershipRequest],
-    ManageListMembershipResponse
-  >,
-  'icrc_75_member_of' : ActorMethod<
-    [ListItem__1, [] | [List__1], [] | [bigint]],
-    Array<List__1>
-  >,
-  'icrc_75_metadata' : ActorMethod<[], DataItemMap>,
+  /**
+   * / Check if replay is complete
+   */
+  'is_replay_complete' : ActorMethod<[], boolean>,
+  /**
+   * / Replay blocks from extracted data - admin only
+   * / This function updates balances directly and adds ICRC3 records
+   */
+  'replay_blocks' : ActorMethod<[Array<ReplayBlock>], ReplayResult>,
   'stats' : ActorMethod<
     [],
     {
-      'domainOwners' : bigint,
-      'owner' : Principal,
-      'pendingTransfers' : Array<WithdrawArgs>,
-      'failedDeposit' : Array<[bigint, ShareArgs]>,
-      'xdr_permyriad_per_icp' : bigint,
-      'icrc1' : Array<MetaDatum>,
-      'icrc2' : Array<MetaDatum__1>,
+      'icrc1' : {
+        'fee' : Balance,
+        'decimals' : number,
+        'minting_account' : Account,
+        'name' : string,
+        'total_supply' : bigint,
+        'symbol' : string,
+      },
       'icrc3' : Stats,
-      'icrc4' : Array<MetaDatum__2>,
-      'lastXDRRate' : bigint,
-      'namespaceAccounts' : bigint,
-      'domainValidation' : bigint,
-      'CyclesLedger_CANISTER_ID' : string,
     }
   >,
 }
-export type Token84 = { 'icrc1' : Principal };
-export interface TokenInfo {
-  'min_deposit' : bigint,
-  'min_withdrawal' : bigint,
-  'withdrawal_fee' : bigint,
-  'deposit_fee' : bigint,
-}
+export type Token84 = { 'cycles' : null } |
+  { 'icrc1' : Principal };
+export interface TokenInfo { 'withdrawal_fee' : bigint, 'deposit_fee' : bigint }
 export interface Transaction {
   'burn' : [] | [Burn],
   'kind' : string,
@@ -659,6 +836,14 @@ export interface Transaction {
 }
 export type TransactionID = bigint;
 export interface TransactionRange { 'start' : bigint, 'length' : bigint }
+export interface Transaction__1 {
+  'burn' : [] | [Burn__1],
+  'kind' : string,
+  'mint' : [] | [Mint__1],
+  'approve' : [] | [Approve],
+  'timestamp' : bigint,
+  'transfer' : [] | [Transfer__1],
+}
 export interface Transfer {
   'to' : Account,
   'fee' : [] | [Balance],
@@ -668,14 +853,6 @@ export interface Transfer {
   'amount' : Balance,
 }
 export interface TransferArgs {
-  'to' : Account,
-  'fee' : [] | [Balance],
-  'memo' : [] | [Memo],
-  'from_subaccount' : [] | [Subaccount],
-  'created_at_time' : [] | [Timestamp],
-  'amount' : Balance,
-}
-export interface TransferArgs__1 {
   'to' : Account,
   'fee' : [] | [Balance],
   'memo' : [] | [Memo],
@@ -708,10 +885,10 @@ export type TransferError = {
   { 'TooOld' : null } |
   { 'InsufficientFunds' : { 'balance' : Balance } };
 export interface TransferFromArgs {
-  'to' : Account__1,
+  'to' : Account,
   'fee' : [] | [bigint],
   'spender_subaccount' : [] | [Uint8Array | number[]],
-  'from' : Account__1,
+  'from' : Account,
   'memo' : [] | [Uint8Array | number[]],
   'created_at_time' : [] | [bigint],
   'amount' : bigint,
@@ -731,8 +908,17 @@ export type TransferFromResponse = { 'Ok' : bigint } |
   { 'Err' : TransferFromError };
 export type TransferResult = { 'Ok' : TxIndex } |
   { 'Err' : TransferError };
+export interface Transfer__1 {
+  'to' : Account__7,
+  'fee' : [] | [bigint],
+  'from' : Account__7,
+  'memo' : [] | [Uint8Array | number[]],
+  'created_at_time' : [] | [bigint],
+  'amount' : bigint,
+  'spender' : [] | [Account__7],
+}
 export type TxIndex = bigint;
-export type UpdateLedgerInfoRequest = { 'Fee' : Fee__2 } |
+export type UpdateLedgerInfoRequest = { 'Fee' : Fee__1 } |
   { 'MaxBalances' : bigint } |
   { 'MaxTransfers' : bigint };
 export type UpdateLedgerInfoRequest__1 = { 'Fee' : Fee__1 } |
@@ -767,17 +953,27 @@ export type Value__1 = { 'Int' : bigint } |
   { 'Blob' : Uint8Array | number[] } |
   { 'Text' : string } |
   { 'Array' : Array<Value__1> };
+export type Value__2 = { 'Int' : bigint } |
+  { 'Map' : Map } |
+  { 'Nat' : bigint } |
+  { 'Nat64' : bigint } |
+  { 'Blob' : Uint8Array | number[] } |
+  { 'Text' : string } |
+  { 'Array' : Array<Value__2> };
 export interface WithdrawArgs {
-  'to' : Account__3,
+  'to' : Account,
   'token' : Token84,
   'amount' : bigint,
 }
-export type WithdrawResult = { 'Ok' : { 'txid' : bigint, 'amount' : bigint } } |
-  {
-    'Err' : { 'AmountBelowMinimum' : null } |
-      { 'InsufficientCredit' : null } |
-      { 'CallLedgerError' : { 'message' : string } }
-  };
+export type WithdrawError = { 'NotAllowed' : null } |
+  { 'TransferFailed' : string } |
+  { 'LimitExceeded' : null };
+export type WithdrawResult = { 'Ok' : { 'amt' : bigint, 'txId' : bigint } } |
+  { 'Err' : WithdrawError };
+/**
+ * / Token.mo - CycleShareLedger using library mixin includes
+ * / Uses includes for ALL ICRC standards (1, 2, 3, 4, 75)
+ */
 export interface _SERVICE extends Token {}
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];
